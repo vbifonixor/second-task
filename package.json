@@ -1,0 +1,22 @@
+{
+  "name": "mobilization",
+  "version": "1.0.0",
+  "description": "A library written for Yandex School of Interface Development as second introductory assignment by Mikhail Kononenko.",
+  "main": "main.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/vbifonixor/second-task.git"
+  },
+  "author": "Mikhail Kononenko <i@vbifonix.ru>",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/vbifonixor/second-task/issues"
+  },
+  "homepage": "https://github.com/vbifonixor/second-task#readme",
+  "dependencies": {
+    "moment": "^2.18.1"
+  }
+}
