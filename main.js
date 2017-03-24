@@ -5,7 +5,7 @@ require('moment/locale/ru');
 
 moment.locale('ru');
 
-console.log(moment('2016-06-03 19:00').format('Do MMM YYYY hh:mm'));
+// console.log(moment('2016-06-03 19:00').format('Do MMM YYYY hh:mm'));
 
 class Mobilization {
 
@@ -27,6 +27,11 @@ class Mobilization {
           this.addPlace(place);
         });
       }
+      if (setup.lectures) {
+        setup.lectures.forEach((lecture) => {
+          this.addLecture(lecture);
+        });
+      }
     }
 
   }
@@ -35,7 +40,21 @@ class Mobilization {
 
   addLecture(lecture) {
     if(this.checkLecture(lecture)) {
-      // TODO: date replace, if it's string,
+      if(this.placeIsCapable(lecture.place, lecture.schools)) {
+        if(this.placeIsFree(lecture.place, lecture.dateFrom, lecture.duration)) {
+          this.lectures.push(lecture);
+          console.info('Лекция "' + lecture.name + '" добавлена успешно');
+        }
+        else {
+          console.error('Ошибка: аудитория "' + lecture.place + '" в желаемое время занята, добавление лекции невозможно.');
+        }
+      }
+      else {
+        console.error('Ошибка: в аудитории "' + lecture.place + '" недостаточно мест, добавление лекции невозможно.');
+      }
+    }
+    else {
+      console.error('Ошибка: лекция "' + lecture.name + '" не добавлена, проверьте данные.');
     }
   }
 
@@ -56,9 +75,8 @@ class Mobilization {
       this.getPlace(lecture.place) &&
       lecture.schools.length &&
       lecture.schools.every((school) => { return this.getSchool(school) }) &&
-      this.placeIsCapable(lecture.place, lecture.schools) &&
-      moment(lecture.dateFrom).isValid()
-      // TODO: placeIsFree check.
+      moment(lecture.dateFrom).isValid() &&
+      !this.getLecture(lecture.name)
     ){ // Если вся инфа о школах заполнена как надо,
       if (!this.getLecture(lecture.name)) { // и такой школы не существует
         return true;
@@ -160,9 +178,40 @@ class Mobilization {
     return false;
   }
 
+  placeIsFree(place, dateFrom, duration) {
+    if(typeof place === 'string' || place instanceof String) {
+      place = this.getPlace(place);
+    }
+    if(typeof dateFrom === 'string' || place instanceof String) {
+      if (!moment(dateFrom).isValid()) {
+        throw new Error('Неверный формат даты');
+      }
+      dateFrom = moment(dateFrom);
+    }
+
+    let dateTo = moment(dateFrom).add(duration, 'm');
+
+    let allLectures = this.lectures.filter((lecture) => {
+      if (lecture.place === place.name) {
+        return true;
+      }
+    });
+
+    allLectures = allLectures.filter((lecture) => {
+      // console.log(dateTo, moment(lecture.dateFrom).toString(), dateTo.toString(), moment(lecture.dateFrom).add(lecture.duration).toString());
+      // console.log(dateTo >= moment(lecture.dateFrom), dateTo.toString(), moment(lecture.dateFrom).add(lecture.duration).toString());
+      if(dateFrom.isBetween(moment(lecture.dateFrom), moment(lecture.dateFrom).add(lecture.duration, 'm'), null,'[)') ||
+         dateTo.isBetween(moment(lecture.dateFrom), moment(lecture.dateFrom).add(lecture.duration, 'm'), null, '(]')) {
+           return true;
+      }
+    })
+
+    if(allLectures.length > 0) {
+      return false;
+    }
+    return true;
+  }
 }
-
-
 
 let mobilization2017 = new Mobilization({
   schools: [
@@ -200,7 +249,7 @@ let mobilization2017 = new Mobilization({
     {
       name: 'Крутая лекция на все школы',
       lecturer: 'Аркадий Волож',
-      dateFrom: '3 июля 2017 19:00',
+      dateFrom: '2017-06-03 19:00',
       duration: 90,
       place: 'Синий Кит',
       schools: ['ШРИ', 'ШМД', 'ШМР']
@@ -235,4 +284,10 @@ let lecture = {
   schools: ['ШРИ']
 };
 
-console.log(mobilization2017.checkLecture(lecture));
+// console.log(mobilization2017.addLecture(lecture));
+
+// console.log(mobilization2017.placeIsFree('Синий Кит', '2017-06-03 19:00', 90));
+// console.log(mobilization2017.placeIsFree('Синий Кит', '2017-08-03 19:00', 90));
+
+// console.log(lecture);
+console.log(mobilization2017);
