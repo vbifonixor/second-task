@@ -430,6 +430,57 @@ class Mobilization {
     }
     return true;
   }
+
+  placeSchedule(place, dateFrom, dateTo) {
+    if (typeof place === 'string' || place instanceof String) {
+      place = this.getPlace(place);
+    }
+    let schedule = this.lectures.filter((lecture) => {
+      if (lecture.place === place.name) {
+        return true;
+      }
+      return false;
+    });
+    if (dateFrom && moment(dateFrom).isValid() && !dateTo) {
+      schedule = schedule.filter((lecture) => {
+        if (moment(lecture.dateFrom).isSameOrAfter(dateFrom)) {
+          return true;
+        }
+        return false;
+      })
+    }
+    if (dateFrom && dateTo && moment(dateFrom).isValid() && moment(dateTo).isValid()) {
+      schedule = schedule.filter((lecture) => {
+        if (moment(lecture.dateFrom).isBetween(dateFrom, dateTo, null, '[]')) {
+          return true;
+        }
+        return false;
+      })
+    }
+
+    schedule.sort((curr, next) => {
+      return moment(curr.dateFrom).isAfter(next.dateFrom);
+    })
+    return schedule;
+  }
+
+
+  /* Методы импорта и экспорта */
+
+  exportJSON() {
+    return JSON.stringify({
+      schools: this.schools,
+      places: this.places,
+      lectures: this.lectures
+    });
+  }
+
+  static importJSON(json) {
+    let parsed = JSON.parse(json);
+    let imported = new Mobilization(parsed);
+    return imported;
+  }
+
 }
 
 let mobilization2017 = new Mobilization({
@@ -604,6 +655,14 @@ mobilization2017.editLecture('Крутая лекция на все школы',
 // console.log(moment());
 
 console.log(mobilization2017.schoolSchedule('ШРИ', '2017-02-04', '2018-02-11'));
+// console.log(mobilization2017.constructor);
+console.log(mobilization2017.placeSchedule('Синий Кит', '2017-02-04', '2018-02-11'));
+
+let y = mobilization2017.exportJSON();
+// console.log(mobilization2017.exportJSON());
+
+
+console.log(Mobilization.importJSON(y));
 
 // mobilization2017.deletePlace('Синий Кит');
 
