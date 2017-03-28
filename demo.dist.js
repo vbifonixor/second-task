@@ -215,6 +215,14 @@ console.log(kashel);
 // А теперь можно и удалить её:
 mobilization2017.deletePlace(kashel.name);
 
+
+// А теперь экспортируем нашу Мобилизацию в JSON
+let ourJSON = mobilization2017.exportJSON();
+console.log(ourJSON); // поглядим на него
+// и создадим новую точно такую же Мобилизацию из него
+let newMobilization = Mobilization.importJSON(ourJSON);
+console.log(newMobilization);
+
 },{"./src/main.js":3}],2:[function(require,module,exports){
 //! moment.js
 //! version : 2.18.1

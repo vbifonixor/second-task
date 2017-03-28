@@ -213,3 +213,11 @@ console.log(mobilization2017.placeIsFree(kashel, '2017-06-26 19:00')); // true
 console.log(kashel);
 // А теперь можно и удалить её:
 mobilization2017.deletePlace(kashel.name);
+
+
+// А теперь экспортируем нашу Мобилизацию в JSON
+let ourJSON = mobilization2017.exportJSON();
+console.log(ourJSON); // поглядим на него
+// и создадим новую точно такую же Мобилизацию из него
+let newMobilization = Mobilization.importJSON(ourJSON);
+console.log(newMobilization);
