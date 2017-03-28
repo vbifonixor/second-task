@@ -186,7 +186,7 @@ class Mobilization {
       return false;
     }
     if(this.checkSchool(schoolClone, true)) { // Проверяем клон на соответствие формату
-      let lecturesForSchool = schoolSchedule(schoolName); // И если всё правильно, находим все лекции для этой школы
+      let lecturesForSchool = this.schoolSchedule(schoolName); // И если всё правильно, находим все лекции для этой школы
       if (lecturesForSchool.length > 0) { // Проверяем, есть ли вообще такие лекции
         lecturesForSchool.forEach((lecture) => { // Для них подменяем название школы на новое
           let newSchools = lecture.schools.slice(0);
@@ -303,10 +303,10 @@ class Mobilization {
     let placeToChange = this.getPlace(placeName); // находим аудиторию по названию
     let placeClone =  JSON.parse(JSON.stringify(placeToChange)); // клонируем
     if(changes && placeToChange) { // заполняем клон соответствующими данными, если аудитория найдена
-      if (placeClone.name) {
+      if (changes.name) {
         placeClone.name = changes.name;
       }
-      if (placeClone.capacity) {
+      if (changes.capacity) {
         placeClone.capacity = changes.capacity;
       }
     }
@@ -344,6 +344,8 @@ class Mobilization {
       silent || console.info('Аудитория "' + placeName + '" изменена. Теперь она называется "' + placeClone.name + '" и в неё помещается ' + placeClone.capacity + ' человек');
       return true;
     }
+    silent || console.error('Ошибка: Данные для изменения аудитории "' + placeName + '" некорректны, перепроверьте их');
+    return false;
   }
 
   getPlace(name) {
@@ -357,7 +359,7 @@ class Mobilization {
 
   checkPlace(place, editor) {
     if (typeof place.name === 'string' && typeof place.capacity === 'number'
-        && place.capacity >= 1 && !this.getPlace(place.name)) { // Если вся инфа о школах заполнена как надо,
+        && place.capacity >= 1) { // Если вся инфа о школах заполнена как надо,
       if (!this.getPlace(place.name) || editor) { // и такой школы не существует (или если проверка запущена методом-редактором)
         return true;
       }
@@ -465,137 +467,4 @@ class Mobilization {
 
 }
 
-let mobilization2017 = new Mobilization({
-  schools: [
-    { name: 'ШРИ', students: 40 },
-    { name: 'ШРИ', students: 45 },
-    { name: 'ШМР', students: 35 },
-    { name: 'ШМД', students: 30 },
-    { name: 'ШМ', students: -2 },
-  ],
-  lectures: [
-    {
-      name: 'Тестирование фронтенда своими руками',
-      lecturer: 'Сергей Бережной',
-      dateFrom: '2017-06-03 19:00',
-      duration: 90,
-      place: 'Синий Кит',
-      schools: ['ШРИ']
-    },
-    {
-      name: 'Дизайн-мышление в комнатных условиях',
-      lecturer: 'Покрас Лампас',
-      dateFrom: '2017-06-03 19:00',
-      duration: 90,
-      place: 'Мулен Руж',
-      schools: ['ШМД']
-    },
-    {
-      name: 'Особенности национальной платформы',
-      lecturer: 'Евгений Кастрыкин',
-      dateFrom: '2017-06-03 20:30',
-      duration: 90,
-      place: 'Мулен Руж',
-      schools: ['ШМД', 'ШМР']
-    },
-    {
-      name: 'Крутая лекция на все школы',
-      lecturer: 'Аркадий Волож',
-      dateFrom: '2017-06-08 19:00',
-      duration: 90,
-      place: 'Синий Кит',
-      schools: ['ШРИ']
-    },
-    {
-      name: 'Lorem ipsum',
-      lecturer: 'Dolor Sit',
-      dateFrom: '2017-06-11 19:00',
-      duration: 90,
-      place: 'Мой 2007',
-      schools: ['ШМД', 'ШМР']
-    },
-    {
-      name: 'Другая лекция',
-      lecturer: 'Другой препод',
-      dateFrom: '2017-06-11 21:30',
-      duration: 90,
-      place: 'Мой 2007',
-      schools: ['ШМР']
-    },
-    {
-      name: 'Как я стал рыбой',
-      lecturer: 'Евгений Комаров',
-      dateFrom: '2017-06-09 19:00',
-      duration: 90,
-      place: 'Сентябрь Горит',
-      schools: ['ШМД']
-    },
-    {
-      name: 'А я стал игуаной',
-      lecturer: 'Артемий Лебедев',
-      dateFrom: '2017-06-12 20:30',
-      duration: 90,
-      place: 'Сентябрь Горит',
-      schools: ['ШМД']
-    },
-    {
-      name: 'Я очень крутой кодер в Яндексе',
-      lecturer: 'Левый Тип-какой-то',
-      dateFrom: '2017-06-12 19:00',
-      duration: 90,
-      place: 'Песнь Льда',
-      schools: ['ШРИ', 'ШМР']
-    },
-    {
-      name: 'Очередное мероприятие для всех',
-      lecturer: 'Сергей Бережной',
-      dateFrom: '2017-06-15 19:00',
-      duration: 90,
-      place: 'Песнь Льда',
-      schools: ['ШРИ', 'ШМД', 'ШМР']
-    },
-  ],
-  places: [
-    {
-      name: 'Мулен Руж',
-      capacity: 90
-    },
-    {
-      name: 'Синий Кит',
-      capacity: 160
-    },
-    {
-      name: 'Мой 2007',
-      capacity: 140
-    },
-    {
-      name: 'Песнь Льда',
-      capacity: 120
-    },
-    {
-      name: 'И Пламени',
-      capacity: 130
-    },
-    {
-      name: 'Сентябрь Горит',
-      capacity: 95
-    },
-  ]
-});
-
-let lecture = {
-  name: 'Адаптивный дизайн и вёрстка',
-  lecturer: 'Антон Пемп',
-  dateFrom: '2017-06-06 19:00',
-  duration: 90,
-  place: 'Синий Кит',
-  schools: ['ШРИ', 'ШМД']
-};
-
-let school = {
-  name: 'Академия Гипербатона',
-  students: 666
-}
-
-
-// console.log(mobilization2017.placeIsFree('Мулен Руж', '2017-06-03 19:00', 90));
+module.exports = Mobilization;
