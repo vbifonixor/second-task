@@ -4754,7 +4754,7 @@ class Mobilization {
     }
   }
 
-  deleteLecture(lectureName, silent, editor) {
+  deleteLecture(lectureName, silent) {
     let lectureToDelete = this.getLecture(lectureName); // Находим лекцию по названию
     if(!lectureToDelete) { // Если такой нет,
       console.error('Ошибка: Лекция "' + lectureName + '" не существует'); // Выводим ошибку
