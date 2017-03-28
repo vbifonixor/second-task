@@ -4,8 +4,8 @@
   "description": "A library written for Yandex School of Interface Development as second introductory assignment by Mikhail Kononenko.",
   "main": "main.js",
   "scripts": {
-    "watch": "watchify main.js -o main.bundled.js -v",
-    "build": "browserify main.js -o main.bundled.js"
+    "watch": "watchify src/main.js -o dist/main.js -v",
+    "build": "browserify src/main.js -o dist/main.js"
   },
   "repository": {
     "type": "git",
